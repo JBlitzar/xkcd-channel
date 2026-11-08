@@ -4,7 +4,7 @@
 
 From what I can find online[^1], previous people have determined that it carries information (follows Zipf's law), and is encoded in some weird way, but not more than that. Others[^2] tried to translate the Chinese to no avail.
 
-Did I use AI? Yeah, I used AI. I still think it's valuable. I might try to clean it up later. Feel free to submit a PR.
+Did I use AI? Yeah, I used AI. I still think it's worth reading. I might try to clean it up later. Feel free to submit a PR.
 
 [^1]: https://www.explainxkcd.com/wiki/index.php/explain_xkcd:xkcd_explains , https://www.explainxkcd.com/wiki/index.php/Category:Extra_pages
 [^2]: https://web.archive.org/web/20151206001238/http://forums.xkcd.com/viewtopic.php?f=2&t=110093
