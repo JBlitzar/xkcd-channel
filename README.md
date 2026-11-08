@@ -23,6 +23,16 @@ redherringredherringredherringredherringredherringredherring
 
 The 72×51 picture inside the second GIF could not be recovered unambiguously. Every candidate looks like scattered dots.
 
+### update there's more to the puzzle.
+
+```
+odd red and even blue numbers are ones
+even financial and odd normal numerals = 1
+... another gif
+```
+
+TODO writeup
+
 My guess is that this was part of some sort of bigger elaborate puzzle, and that this was a red herring. Or maybe this is a red herring to waste explainxkcd's time ;)
 
 
