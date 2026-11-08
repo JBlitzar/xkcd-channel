@@ -422,6 +422,19 @@ for fi, m in enumerate(frames):
 # within the noise is a clean ח, which makes burst 113 (קסח = 168) match layer 3.
 corrections.update({23028: 25, 23046: 246})
 
+# Frames 47, 443 and 720 are canonical but each differs by a few pixels from every
+# other copy of its letter. These readings make them identical, and they are also
+# the only numbers on the page whose digits mixed normal and financial forms.
+corrections.update({3087: 185, 29067: 159, 29068: 57, 47455: 165, 47458: 168})
+
+# Nothing in the GIF checks these bytes, so the solver kept the lower digit.
+# White and red are 255 (palette bytes 14 and 16). The transparent index is unused
+# (transparency is off) and is 255 in every frame where the noise allows it.
+corrections.update({14: 255, 16: 255})
+for endpos, _, m in chain:
+    if m.get("type") == "gce" and fixed[endpos - 2] != 255:
+        corrections[endpos - 2] = 255
+
 # Frame positions read as 2 instead of 5 (and one 6 instead of 8) draw the letter
 # a few pixels off, and the next blank frame does not cover it. The leftover edges
 # looked like "static". Keyed by frame index: (field, corrected low byte).

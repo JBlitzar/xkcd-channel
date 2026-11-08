@@ -25,13 +25,13 @@ Layer 1 animation, layer 3 picture, layer 5 picture:
 
 ![](results/decoded_fixed.gif) ![](results/inner_x8.png) ![](results/layer5_x6.png)
 
-Whether there is a layer 6 is open.
+There is probably no layer 6 (see [Open questions](#open-questions)).
 
 Source: <https://web.archive.org/web/20141011002528/https://xkcd.com/channel.html> (`input/channel.html` and `input/channel.txt` are byte-identical). A 2014 forum post reports `Last-Modified: Sun, 15 Jan 2012` for both files, so the page likely dates from January 2012.
 
 ## Reproduce
 
-Requires [`uv`](https://docs.astral.sh/uv/). Each script declares its own dependencies. Takes about 40 seconds.
+Requires [`uv`](https://docs.astral.sh/uv/). Each script declares its own dependencies. Takes about 30 seconds.
 
 ```bash
 ./repro/run.sh            # writes to results/
@@ -69,17 +69,19 @@ uv run --script repro/04_decode_color_parity.py results/
 - Every UTF-8 byte has ±1 noise. Decoding each 3-byte character to the nearest numeral recovers most digits. Two pairs stay confusable: 二/伍 (2/5) and 六/八 (6/8). The 2/5 mix-ups are silent, so every digit within the noise radius stays a candidate (3668 ambiguous bytes).
 - The bytes start with `GIF89a`: a 40×40 animated GIF, 4-color palette, 1119 frames.
 - `01_decode_outer.py` walks the GIF block structure. It backtracks over ambiguous bytes and accepts a frame only if its LZW data decodes exactly. Result: 2240 blocks, 1119 frames, 1106 byte repairs, and every frame loads in Pillow.
-- A second pass makes 56 more corrections (`results/corrections.json`), each a 2↔5 or 6↔8 digit swap within the noise:
+- A second pass makes 302 more corrections (`results/corrections.json`), each a 2↔5 or 6↔8 digit swap within the noise:
   - **Data (43 bytes, 19 frames):** the page's encoder is canonical greedy LZW, so re-encoding a frame's pixels must reproduce its bytes exactly. 18 frames didn't. Each has exactly one alternative reading that does, except frame 954, which has two (the script takes the one without a stray mark inside the ט). Frame 351 was canonical but garbled. Its one alternative canonical reading is a clean ח.
   - **Frame positions (13 bytes):** 12 frame tops were read as 2 instead of 5 and one left edge as 6 instead of 8. Each drew a letter a few pixels off, and the next blank frame didn't cover the leftover edges.
-- After both passes, every frame is canonical, every frame is either blank or one clean letter, and each glyph is always drawn at the same spot.
+  - **Odd glyphs (5 bytes):** frames 47, 443 and 720 were canonical but differed by a few pixels from every other copy of their letter. One reading each makes them identical. These are also the only numbers on the page whose digits mixed normal and financial forms, so two separate checks agree.
+  - **Unchecked bytes (241):** nothing in the GIF checks the palette or the transparent-index byte (transparency is off), so the solver had kept the lower digit. The palette is white, red, blue and black, all at 255, and the transparent index is 255 in every frame.
+- After both passes, every frame is canonical, every frame is either blank or one clean letter, every copy of a letter in a given color is pixel-identical, and each glyph is always drawn at the same spot.
 
 **What didn't work, and the gotchas**
 - A plain nearest-numeral decode (`exploration/1_outer_decode/decode.py`) breaks after a few frames.
 - A greedy repair (`exploration/1_outer_decode/solve.py`) chose wrong digits early and could not recover. The backtracking solver replaced it.
 - The encoder uses the classic deferred code-width increase. The end-of-data code can sit exactly at the last bit, so the decoder must allow zero-filled reads past the end.
 - Validate each frame on a canvas the size of the frame. A full 40×40 canvas makes Pillow report the wrong pixel count.
-- Where the GIF structure can't tell 2 from 5, the solver picks the lower digit. "Decodes exactly" is too weak a check: it let through the wrong readings above, which showed up as "static" in the animation. Some bytes have no check at all. The palette is probably white 255,255,255 and red 255,0,0, not the 255,225,255 and 252,0,0 in the output. That doesn't affect any later layer.
+- Where the GIF structure can't tell 2 from 5, the solver picks the lower digit. "Decodes exactly" is too weak a check: it let through the wrong readings above, which showed up as "static" in the animation.
 
 ## Layer 2: Hebrew letters → second GIF
 
@@ -122,13 +124,14 @@ uv run --script repro/04_decode_color_parity.py results/
 - It needs no repair. The noise confusions keep the bit: 二 (2, normal) and 伍 (5, financial) both give 0, and so do 六 and 八 (6 and 8, both normal). That looks deliberate.
 
 **What didn't work**
-- Taking the form from the **first** numeral gives the right header but a broken image. Repaired 2↔5 digits flip the parity bit. (The style never changes within a number: the 61 numbers that seem to mix styles are 伍 digits misread as 二.)
+- Taking the form from the **first** numeral gives the right header but a broken image. Repaired 2↔5 digits flip the parity bit. (The style never changes within a number. The numbers that seemed to mix styles were misread digits, and after the layer-1 corrections none do.)
 - Packing the forms of all numerals, or of the first or middle numeral, gives random-looking bits.
 
 ## Other dead ends
 
-- **GIF metadata:** every frame of the layer-1 animation has the same delay (10) and disposal (1). There are no local palettes or interlacing. The only extensions are the standard loop block (count 0xFFFF) and a one-space comment. Frame rectangles are just the bounding boxes of changed pixels. Transparency is off, and the transparent-index byte (255 ×880, 225 ×113, 252 ×98, 222 ×28) is just 2/5 noise on 0xFF. Background index is 1. Palette entry 3 (black) is never used. Padding bits are zero, and nothing follows the trailer.
+- **GIF metadata:** every frame of the layer-1 animation has the same delay (10) and disposal (1). There are no local palettes or interlacing. The only extensions are the standard loop block (count 0xFFFF) and a one-space comment. Frame rectangles are just the bounding boxes of changed pixels. Transparency is off, and the transparent index is always 255. Background index is 1. Palette entry 3 (black) is never used. Padding bits are zero, and nothing follows the trailer.
 - **Timing and position:** every letter is shown for one frame, gaps are one frame, and each glyph is always drawn at the same spot.
+- **Hebrew spelling:** plain largest-first everywhere. Bytes ending in 15 or 16 use יה/יו, not the traditional טו/טז. Every burst is one color, and all blank frames are identical.
 - **GIF comments are length padding.** Each one makes its file a multiple of 8 bytes, so it fills whole bits in the next layer up. The layer-1 comment is the smallest that brings 73,803 bytes to 73,808. `redherring` ×6 brings layer 2 to 336 bytes (42 × 8, the length of the layer-4 message). The layer-5 comment brings 9,205 bytes to 73,808 / 8 = 9,226, which is why it stops at 17 characters.
 - **The layer-5 GIF is ordinary encoder output.** netpbm's `ppmtogif` reproduces its LZW data byte for byte, and GraphicsMagick reproduces the whole file apart from two header details. Bit planes, palette steps, least-significant-bit statistics and enhanced views show nothing.
 - **Noise:** the noise rate depends strongly on the byte value (about 0.5% for 0x8c, about 49% for 0x80). Given the value, it is independent of position, digit, style, parity and the layer-5 bit. No mechanism or message found.
@@ -137,7 +140,8 @@ uv run --script repro/04_decode_color_parity.py results/
 
 ## Open questions
 
-- **Layer 6?** Every layer so far hid an instruction for the next. Nothing found in the layer-5 file, its pixels, or the page's leftover channels (see above).
-- **Why Order of the Phoenix?** It is book 5, and this is layer 5. That may be a coincidence.
-- **The January 2012 date** was the weekend of the MIT Mystery Hunt and right before the SOPA blackout. No connection has been found.
+- **Layer 6? Probably not.** Every free choice in layers 1–5 is either fixed by an earlier layer or behaves like noise. The layer-5 file is ordinary encoder output, and its comment is length padding.
+- **The layer-5 picture** is probably a plain crop of the US Scholastic cover, with the title text brightened. It matches the 4 Scholastic editions on Open Library far better than 175 other covers, and the difference image shows nothing added. The exact source image wasn't found, so this isn't a pixel-exact match.
+- **The noise rate** depends on the byte value in a way no one has explained (about 0.5% for 0x8c, about 49% for 0x80). It carries no detectable information.
+- **The January 2012 date** was the weekend of the MIT Mystery Hunt and right before the SOPA blackout. One theory: the page was one step in a larger hunt, and the answer was the book itself, so solvers would then have to get a copy. Order of the Phoenix being book 5 at layer 5 may be a coincidence.
 - A web search found no earlier published decode.
