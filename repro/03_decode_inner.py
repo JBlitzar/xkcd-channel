@@ -7,8 +7,9 @@
 # ///
 
 # usage: 03_decode_inner.py <workdir>
-# Turns letter bursts into bytes (gematria), repairs the inner GIF's LZW data
-# with a minimal-change search, and writes inner.gif + transcription_bytes.txt.
+# Layers 2-3. Turns letter bursts into bytes (gematria), repairs the inner GIF's
+# LZW data with a minimal-change search, keeps the one stream a greedy LZW
+# encoder could have produced, and writes inner.gif + transcription_bytes.txt.
 import itertools
 import json
 import sys
@@ -154,6 +155,43 @@ for budget in range(6):
     print("changed letters allowed:", budget, "valid streams found:", len(sols), flush=True)
     if sols:
         break
+
+
+def greedy_violations(stream):
+    """Times a code was emitted although a longer match (prev + next pixel) was
+    already in the dictionary. A greedy encoder (Pillow, and this file's author,
+    across the outer GIF) never does this."""
+    table = [bytes([k]) for k in range(CLEAR)] + [b"", b""]
+    known = {t: k for k, t in enumerate(table[:CLEAR])}
+    acc = nb = v = 0
+    size, prev = MINC + 1, None
+    for byte in stream:
+        acc |= byte << nb
+        nb += 8
+        while nb >= size:
+            code = acc & ((1 << size) - 1)
+            acc >>= size
+            nb -= size
+            if code == CLEAR:
+                continue
+            if code == EOI:
+                return v
+            e = table[code] if code < len(table) else prev + prev[:1]
+            if prev is not None:
+                new = prev + e[:1]
+                v += new in known
+                known.setdefault(new, len(table))
+                table.append(new)
+                if len(table) == 1 << size and size < 12:
+                    size += 1
+            prev = e
+    return v
+
+
+viol = [greedy_violations(bytes(s)) for s in sols]
+print("greedy-LZW violations per stream:", viol)
+sols = [s for _, s in sorted(zip(viol, sols), key=lambda p: p[0])]
+assert sorted(viol)[0] == 0 and sorted(viol)[1:2] != [0], "expected exactly one greedy stream"
 json.dump(sols, open(ROOT / "inner_solutions.json", "w"))
 
 full = list(base)
@@ -163,6 +201,7 @@ gif = bytes(full)
 im = Image.open(ROOT / "inner.gif")
 im.load()
 print("inner.gif:", im.size, "comment:", im.info.get("comment"))
+im.convert("L").resize((im.width * 8, im.height * 8), Image.Resampling.NEAREST).save(ROOT / "inner_x8.png")
 
 sheet = Image.new("RGB", (4 * 300, 2 * 230), "white")
 dr = ImageDraw.Draw(sheet)

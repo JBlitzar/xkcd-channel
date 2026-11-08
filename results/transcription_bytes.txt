@@ -111,7 +111,7 @@
 110  frames 339-340  צה   BB   =  95 _
 111  frames 342-344  קכט  BBB  = 129 .
 112  frames 346-347  קנ   RR   = 150 .
-113  frames 349-351  קס?  RRR  = 161 .  (read None, repaired)
+113  frames 349-351  קס?  RRR  = 168 .  (read None, repaired)
 114  frames 353-355  קמה  RRR  = 145 .
 115  frames 357-359  קכח  RRR  = 128 .
 116  frames 361-362  כה   BB   =  25 .
@@ -126,7 +126,7 @@
 125  frames 392-393  נז   BB   =  57 9
 126  frames 395-397  קלט  BBB  = 139 .
 127  frames 399-401  רמה  RRR  = 245 .
-128  frames 404-404  ה    B    =   5 .
+128  frames 403-404  נה   BB   =  55 7
 129  frames 406-407  כז   RR   =  27 .
 130  frames 409-411  רמט  RRR  = 249 .
 131  frames 413-415  קיג  BBB  = 113 q
@@ -191,16 +191,16 @@
 190  frames 620-622  קכז  RRR  = 127 .
 191  frames 624-626  רמז  BBB  = 247 .
 192  frames 628-628  ז    B    =   7 .
-193  frames 630-631  פח   BB   =  85 U  (read 88, repaired)
+193  frames 630-631  פח   BB   =  88 X
 194  frames 633-634  לט   RR   =  39 '
 195  frames 636-637  נו   RR   =  56 8
 196  frames 639-639  ח    B    =   8 .
 197  frames 641-642  נה   RR   =  55 7
-198  frames 644-645  ק?   RR   = 180 .  (read None, repaired)
+198  frames 644-645  ק?   RR   = 101 e  (read None, repaired)
 199  frames 647-649  קעט  RRR  = 179 .
 200  frames 651-653  קסו  RRR  = 166 .
 201  frames 655-656  קנ   BB   = 150 .
-202  frames 658-659  סח   BB   =  65 A  (read 68, repaired)
+202  frames 658-659  סח   BB   =  68 D
 203  frames 661-662  כב   BB   =  22 .
 204  frames 664-664  ק    R    = 100 d
 205  frames 666-668  רלא  BBB  = 231 .
@@ -271,7 +271,7 @@
 270  frames 890-892  רלג  BBB  = 233 .
 271  frames 894-895  פז   RR   =  87 W
 272  frames 897-898  רא   BB   = 201 .
-273  frames 900-901  ?מ   BB   = 120 x  (read None, repaired)
+273  frames 900-901  ?מ   BB   = 140 .  (read None, repaired)
 274  frames 903-904  קכ   BB   = 120 x
 275  frames 906-908  קסח  BBB  = 168 .
 276  frames 910-912  רמו  RRR  = 246 .
@@ -286,7 +286,7 @@
 285  frames 941-943  קצב  RRR  = 192 .
 286  frames 945-947  קפה  BBB  = 185 .
 287  frames 949-951  רנא  RRR  = 251 .
-288  frames 953-954  כס   BB   =  80 P
+288  frames 953-954  כט   BB   =  29 .
 289  frames 956-958  קסו  BBB  = 166 .
 290  frames 960-961  רנ   BB   = 250 .
 291  frames 963-965  קנג  BBB  = 153 .

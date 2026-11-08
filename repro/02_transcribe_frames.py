@@ -41,9 +41,11 @@ G = {k: clean(ink[i]) for k, i in EX.items()}
 
 # Frames where static overlaps a letter so badly that template matching fails.
 # Labels were read by eye; "?" means the letter is unreadable.
+# 403 looks like static but is a noisy נ (the only "static" frame that draws ink
+# inside its own frame rectangle); 954 has the open top of ט, not ס.
 MANUAL = {3: "ע", 286: "ל", 287: "ב", 302: "ז", 327: "ע", 353: "ק", 380: "ל", 668: "א",
           680: "א", 728: "ה", 759: "ל", 763: "ל", 844: "ל", 874: "צ", 881: "ל", 935: "ל",
-          954: "ס", 304: "י", 738: "י", 133: "?", 351: "?", 645: "?", 900: "?"}
+          954: "ט", 403: "נ", 304: "י", 738: "י", 133: "?", 351: "?", 645: "?", 900: "?"}
 
 SHIFTS = [(dy, dx) for dy in range(-3, 4) for dx in range(-3, 4)]
 
