@@ -42,7 +42,7 @@
  41  frames 123-124  קג   RR   = 103 g
  42  frames 126-128  קיד  BBB  = 114 r
  43  frames 130-131  קא   BB   = 101 e
- 44  frames 133-133  ?    R    = 100 d  (read None, repaired)
+ 44  frames 133-133  ק    R    = 100 d  (read None, repaired)
  45  frames 135-136  קד   BB   = 104 h
  46  frames 138-139  קא   RR   = 101 e
  47  frames 141-143  קיד  RRR  = 114 r
@@ -111,7 +111,7 @@
 110  frames 339-340  צה   BB   =  95 _
 111  frames 342-344  קכט  BBB  = 129 .
 112  frames 346-347  קנ   RR   = 150 .
-113  frames 349-351  קס?  RRR  = 168 .  (read None, repaired)
+113  frames 349-351  קסח  RRR  = 168 .
 114  frames 353-355  קמה  RRR  = 145 .
 115  frames 357-359  קכח  RRR  = 128 .
 116  frames 361-362  כה   BB   =  25 .
@@ -196,7 +196,7 @@
 195  frames 636-637  נו   RR   =  56 8
 196  frames 639-639  ח    B    =   8 .
 197  frames 641-642  נה   RR   =  55 7
-198  frames 644-645  ק?   RR   = 101 e  (read None, repaired)
+198  frames 644-645  קא   RR   = 101 e
 199  frames 647-649  קעט  RRR  = 179 .
 200  frames 651-653  קסו  RRR  = 166 .
 201  frames 655-656  קנ   BB   = 150 .
@@ -271,7 +271,7 @@
 270  frames 890-892  רלג  BBB  = 233 .
 271  frames 894-895  פז   RR   =  87 W
 272  frames 897-898  רא   BB   = 201 .
-273  frames 900-901  ?מ   BB   = 140 .  (read None, repaired)
+273  frames 900-901  קמ   BB   = 140 .
 274  frames 903-904  קכ   BB   = 120 x
 275  frames 906-908  קסח  BBB  = 168 .
 276  frames 910-912  רמו  RRR  = 246 .

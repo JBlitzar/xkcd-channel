@@ -7,7 +7,7 @@
 # ///
 from pathlib import Path
 from collections import Counter
-import io, sys, json
+import io, sys, json, itertools
 
 sys.setrecursionlimit(1000000)
 # usage: 01_decode_outer.py <channel.txt> <workdir>
@@ -344,10 +344,113 @@ print("frames:", len(frames))
 allfix = {}
 for _, fx, _ in chain:
     allfix.update(fx)
-print("total fixes:", len(allfix))
-out = bytes(allfix.get(i, nums[i]) for i in range(len(nums)))
+print("solver fixes:", len(allfix))
+
+
+def lzw_encode_bits(pixels, mincode):
+    """Canonical greedy LZW with deferred code-width increase, as the page's encoder."""
+    clear = 1 << mincode
+    size = mincode + 1
+    table = {(k,): k for k in range(clear)}
+    nextcode = clear + 2
+    bits = []
+
+    def emit(code):
+        bits.extend((code >> j) & 1 for j in range(size))
+
+    emit(clear)
+    w = ()
+    for p in pixels:
+        if w + (p,) in table:
+            w += (p,)
+            continue
+        if w:
+            emit(table[w])
+            table[w + (p,)] = nextcode
+            nextcode += 1
+            if nextcode == (1 << size) + 1 and size < 12:
+                size += 1
+        w = (p,)
+    emit(table[w])
+    if nextcode == (1 << size) + 1 and size < 12:
+        size += 1
+    emit(clear + 1)
+    return bits
+
+
+def canonical(data, mincode, npix):
+    pix = lzw_strict(data, mincode, npix)
+    if pix is None:
+        return False
+    bits = lzw_encode_bits(pix, mincode)
+    have = [(data[k >> 3] >> (k & 7)) & 1 for k in range(len(data) * 8)]
+    n = max(len(have), len(bits))
+    return have + [0] * (n - len(have)) == bits + [0] * (n - len(bits))
+
+
+# Second pass. The solver accepts any reading that decodes, but the page's encoder
+# is canonical greedy LZW, so a frame that does not re-encode byte for byte holds
+# a wrong 2/5 or 6/8 choice. Search the fewest changes that make it canonical.
+fixed = bytearray(allfix.get(i, nums[i]) for i in range(len(nums)))
+corrections = {}
+# Frame 954 has two canonical readings, both ט. Only this one draws it without a
+# stray mark inside the letter.
+TIES = {954: {62966: 162}}
+for fi, m in enumerate(frames):
+    didx, mc, npix = m["didx"], m["mincode"], m["w"] * m["h"]
+    data = [fixed[i] for i in didx]
+    if canonical(data, mc, npix):
+        continue
+    amb = [(k, i) for k, i in enumerate(didx) if len(cand(i)) > 1]
+    found = []
+    for n in range(1, 5):
+        for combo in itertools.combinations(amb, n):
+            for vals in itertools.product(*[[v for v in cand(i) if v != data[k]] for k, i in combo]):
+                d2 = data[:]
+                for (k, _), v in zip(combo, vals):
+                    d2[k] = v
+                if canonical(d2, mc, npix):
+                    found.append({i: v for (_, i), v in zip(combo, vals)})
+        if found:
+            break
+    if len(found) > 1:
+        found = [f for f in found if all(f.get(i) == v for i, v in TIES.get(fi, {}).items())]
+    assert len(found) == 1, (fi, found)
+    corrections.update(found[0])
+
+# Frame 351 is canonical but garbled. Its only alternative canonical reading
+# within the noise is a clean ח, which makes burst 113 (קסח = 168) match layer 3.
+corrections.update({23028: 25, 23046: 246})
+
+# Frame positions read as 2 instead of 5 (and one 6 instead of 8) draw the letter
+# a few pixels off, and the next blank frame does not cover it. The leftover edges
+# looked like "static". Keyed by frame index: (field, corrected low byte).
+POSITION_FIXES = {286: ("top", 5), 287: ("top", 5), 302: ("top", 5), 324: ("top", 5),
+                  360: ("left", 8), 580: ("top", 5), 668: ("top", 5), 728: ("top", 5),
+                  759: ("top", 5), 763: ("top", 5), 844: ("top", 5), 881: ("top", 5),
+                  935: ("top", 5)}
+start = 25
+fi = 0
+for endpos, _, m in chain:
+    if "w" in m:
+        if fi in POSITION_FIXES:
+            field, v = POSITION_FIXES[fi]
+            corrections[start + (1 if field == "left" else 3)] = v
+            m[field] = v
+        fi += 1
+    start = endpos
+
+for i, v in corrections.items():
+    assert v in cand(i) and v != fixed[i], (i, v)
+    fixed[i] = v
+for m in frames:
+    assert canonical([fixed[i] for i in m["didx"]], m["mincode"], m["w"] * m["h"])
+print("corrections:", len(corrections), "(all frames now canonical)")
+allfix = {i: v for i, v in enumerate(fixed) if v != nums[i]}
+out = bytes(fixed)
 (ROOT / "decoded_fixed.gif").write_bytes(out)
 (ROOT / "fixes.json").write_text(json.dumps({str(k): v for k, v in sorted(allfix.items())}))
+(ROOT / "corrections.json").write_text(json.dumps({str(k): v for k, v in sorted(corrections.items())}))
 (ROOT / "chain.json").write_text(json.dumps(
     [{"pos": p, **{k: v for k, v in m.items() if k != "didx"}} for p, _, m in chain]))
 (ROOT / "numbers_raw.txt").write_text(" ".join(map(str, nums)) + "\n")

@@ -46,7 +46,7 @@ uv run --script repro/04_decode_color_parity.py results/
 
 | Script | Layer | Input → output |
 |---|---|---|
-| `repro/01_decode_outer.py` | 1 | `channel.txt` → `decoded_fixed.gif` (1119 frames), `frames.npy`, `fixes.json`, `chain.json` |
+| `repro/01_decode_outer.py` | 1 | `channel.txt` → `decoded_fixed.gif` (1119 frames), `frames.npy`, `fixes.json`, `corrections.json`, `chain.json` |
 | `repro/02_transcribe_frames.py` | 2 | `frames.npy` → `transcription_frames.tsv`, `seq.json`, `tokens.json`, `alts.json` |
 | `repro/03_decode_inner.py` | 2–3 | `tokens.json` → `inner.gif`, `inner_x8.png`, `transcription_bytes.txt`, `inner_solutions.json`, `inner_candidates.png` |
 | `repro/04_decode_color_parity.py` | 4 | `tokens.json` + `inner.gif` → `layer4_message.txt` |
@@ -69,41 +69,39 @@ uv run --script repro/04_decode_color_parity.py results/
 - Every UTF-8 byte has ±1 noise. Decoding each 3-byte character to the nearest numeral recovers most digits. Two pairs stay confusable: 二/伍 (2/5) and 六/八 (6/8). The 2/5 mix-ups are silent, so every digit within the noise radius stays a candidate (3668 ambiguous bytes).
 - The bytes start with `GIF89a`: a 40×40 animated GIF, 4-color palette, 1119 frames.
 - `01_decode_outer.py` walks the GIF block structure. It backtracks over ambiguous bytes and accepts a frame only if its LZW data decodes exactly. Result: 2240 blocks, 1119 frames, 1106 byte repairs, and every frame loads in Pillow.
+- A second pass makes 56 more corrections (`results/corrections.json`), each a 2↔5 or 6↔8 digit swap within the noise:
+  - **Data (43 bytes, 19 frames):** the page's encoder is canonical greedy LZW, so re-encoding a frame's pixels must reproduce its bytes exactly. 18 frames didn't. Each has exactly one alternative reading that does, except frame 954, which has two (the script takes the one without a stray mark inside the ט). Frame 351 was canonical but garbled. Its one alternative canonical reading is a clean ח.
+  - **Frame positions (13 bytes):** 12 frame tops were read as 2 instead of 5 and one left edge as 6 instead of 8. Each drew a letter a few pixels off, and the next blank frame didn't cover the leftover edges.
+- After both passes, every frame is canonical, every frame is either blank or one clean letter, and each glyph is always drawn at the same spot.
 
 **What didn't work, and the gotchas**
 - A plain nearest-numeral decode (`exploration/1_outer_decode/decode.py`) breaks after a few frames.
 - A greedy repair (`exploration/1_outer_decode/solve.py`) chose wrong digits early and could not recover. The backtracking solver replaced it.
 - The encoder uses the classic deferred code-width increase. The end-of-data code can sit exactly at the last bit, so the decoder must allow zero-filled reads past the end.
 - Validate each frame on a canvas the size of the frame. A full 40×40 canvas makes Pillow report the wrong pixel count.
-- Where the GIF structure can't tell 2 from 5 (palette bytes, for example), the solver picks the lower digit. That is sometimes wrong. The red in the palette is probably 255, not 252. It doesn't affect any later layer.
+- Where the GIF structure can't tell 2 from 5, the solver picks the lower digit. "Decodes exactly" is too weak a check: it let through the wrong readings above, which showed up as "static" in the animation. Some bytes have no check at all. The palette is probably white 255,255,255 and red 255,0,0, not the 255,225,255 and 252,0,0 in the output. That doesn't affect any later layer.
 
 ## Layer 2: Hebrew letters → second GIF
 
 **How it works**
-- Each frame is blank, a "static" leftover, one Hebrew letter, or the word `אפס` ("zero"). Letters are red or blue.
-- `02_transcribe_frames.py` matches each frame against one clean example per glyph (±3 px shift; rewards covered template pixels, penalizes missing and extra ink). It knows 20 letters, א through ר, plus `אפס`.
-- 24 frames where leftover static covers the letter were labeled by eye (the `MANUAL` table). Four are unreadable (`?`).
-- Blank or static frames separate bursts. There are **336 bursts**, and each one is a byte in Hebrew numerals: א=1 … ט=9, י=10 … צ=90, ק=100, ר=200, `אפס`=0. For example, `קיד` = 100+10+4 = 114 = `r`.
+- Each frame is blank, one Hebrew letter, or the word `אפס` ("zero"). Letters are red or blue.
+- `02_transcribe_frames.py` matches each frame against one clean example per glyph (±3 px shift; rewards covered template pixels, penalizes missing and extra ink). It knows 20 letters, א through ר, plus `אפס`. Every frame is read automatically, with no hand labels and no ambiguous letters.
+- Blank frames separate bursts. There are **336 bursts**, and each one is a byte in Hebrew numerals: א=1 … ט=9, י=10 … צ=90, ק=100, ר=200, `אפס`=0. For example, `קיד` = 100+10+4 = 114 = `r`.
 - The bytes form a GIF89a: 72×51, 2-color palette, comment `redherring` ×6, one image with a single 239-byte LZW chunk. The sizes add up to exactly 336 bytes, which confirms the burst count.
-- Burst 44 is unreadable, but it sits inside the sixth `redherring`, so it must be `d`.
 
 **What didn't work, and the gotchas**
 - Shape clustering (`exploration/2_frame_reading/clusters*.png`) helped find the glyphs but mixed letters with static, so it couldn't serve as the transcription.
 - A classifier without shift tolerance mislabeled frames (י vs. ט).
-- The "static" is not noise. Frames are never fully erased, so parts of earlier letters stay on screen. This makes ט/ס and ה/ח hard to tell apart, so the next stage treats those as candidate sets.
-- Two misreads hid the picture for a long time:
-  - **Frame 403** looked like static but is a noisy נ. It is the only "static" frame that draws ink inside its own frame rectangle. Burst 128 is נה = 55, not ה = 5.
-  - **Frame 954** has the open top of ט, not ס. Burst 288 is כט = 29. The old reading, כס = 80, also broke the largest-first rule of Hebrew numerals.
+- Before the layer-1 corrections, the animation was full of "static": edges of letters drawn in the wrong place, or letters garbled by wrong data bytes. We first took it for a design feature. Working around it took 24 hand-labeled frames, four unreadable letters, and ט/ס and ה/ח candidate sets. Two misreads hid the picture for a long time: frame 403 (a garbled נ that looked like static; burst 128 is נה = 55) and frame 954 (ט read as ס; burst 288 is כט = 29). Both are among the 19 frames the canonical-LZW check fixes.
 
 ## Layer 3: the second GIF's picture
 
 **How it works**
-- With those two fixes, the LZW data decodes with **no letter changes**. Three valid streams remain, which differ only in the unreadable bursts.
-- A greedy LZW encoder never emits a code when a longer match is already in its dictionary. Pillow's encoder follows this rule, and so do 1101 of the 1119 layer-1 frames. The other 18 probably contain wrong layer-1 repairs. Exactly one stream follows it (violations: 0, 2, 3), and it is the one `03_decode_inner.py` keeps.
+- The LZW data decodes with **no letter changes**, and only one stream is valid. `03_decode_inner.py` still runs a minimal-change search and checks that the stream is greedy (a greedy encoder never emits a code when a longer match is already in its dictionary), as a cross-check.
 - The picture reads: **"odd red and / even blue / numbers are / ones"** (`results/inner_x8.png`).
 
 **What didn't work**
-- Before the two transcription fixes, the minimal-change search needed 2 changes and found 50 streams. All of them looked like random dots. That led to the wrong early conclusion that the picture was filler.
+- With the old transcription, the minimal-change search needed 2 changes and found 50 streams. All of them looked like random dots. That led to the wrong early conclusion that the picture was filler.
 - Earlier decoders had bugs (bit accounting on the reset code, allowing palette indices 2–3 in a 2-color image). They produced plausible-looking but invalid images (`exploration/3_inner_decode/inner_idx.png` and similar).
 - Blurring, dilating, other widths, transposing and periodicity checks on the wrong candidates found nothing, because there was nothing to find.
 
@@ -112,7 +110,6 @@ uv run --script repro/04_decode_color_parity.py results/
 **How it works**
 - One bit per burst: 1 if the byte is odd and the letters are red, or even and blue. Every burst is a single color.
 - The 336 bits are 42 bytes of ASCII: **`even financial and odd normal numerals = 1`** (`results/layer4_message.txt`).
-- This also confirms the unreadable burst 198 is `e` (101): the other valid stream spells "nmrmal".
 
 **What didn't work**
 - Color on its own looks random: 167 of 336 bursts are red, with no structure in runs, autocorrelation or byte packings. It only carries data combined with odd/even.
@@ -121,23 +118,26 @@ uv run --script repro/04_decode_color_parity.py results/
 
 **How it works**
 - One bit per number on the original page, from its **last** numeral: 1 if that digit is even and financial, or odd and normal.
-- 73,808 numbers give exactly 9,226 bytes: a GIF89a, 95×93, 256-level grayscale palette, comment `REDHERRINGREDHERR` (17 characters, cut off), showing the *Harry Potter and the Order of the Phoenix* cover (`results/layer5.gif`).
+- 73,808 numbers give exactly 9,226 bytes: a GIF89a, 95×93, 256-level grayscale palette, comment `REDHERRINGREDHERR`, showing the *Harry Potter and the Order of the Phoenix* cover (`results/layer5.gif`).
 - It needs no repair. The noise confusions keep the bit: 二 (2, normal) and 伍 (5, financial) both give 0, and so do 六 and 八 (6 and 8, both normal). That looks deliberate.
 
 **What didn't work**
-- Taking the form from the **first** numeral gives the right header but a broken image. Repaired 2↔5 digits flip the parity bit, and in 61 numbers the forms differ between digits.
+- Taking the form from the **first** numeral gives the right header but a broken image. Repaired 2↔5 digits flip the parity bit. (The style never changes within a number: the 61 numbers that seem to mix styles are 伍 digits misread as 二.)
 - Packing the forms of all numerals, or of the first or middle numeral, gives random-looking bits.
 
 ## Other dead ends
 
-- **GIF metadata:** every frame of the layer-1 animation has the same delay (10) and disposal (1). There are no local palettes or interlacing. The only extensions are the standard loop block and a one-space comment. Frame rectangles are just the bounding boxes of changed pixels.
+- **GIF metadata:** every frame of the layer-1 animation has the same delay (10) and disposal (1). There are no local palettes or interlacing. The only extensions are the standard loop block (count 0xFFFF) and a one-space comment. Frame rectangles are just the bounding boxes of changed pixels. Transparency is off, and the transparent-index byte (255 ×880, 225 ×113, 252 ×98, 222 ×28) is just 2/5 noise on 0xFF. Background index is 1. Palette entry 3 (black) is never used. Padding bits are zero, and nothing follows the trailer.
 - **Timing and position:** every letter is shown for one frame, gaps are one frame, and each glyph is always drawn at the same spot.
-- **Noise and separators:** the ±1 noise is flat and uncorrelated across the file. The separator bytes look random.
+- **GIF comments are length padding.** Each one makes its file a multiple of 8 bytes, so it fills whole bits in the next layer up. The layer-1 comment is the smallest that brings 73,803 bytes to 73,808. `redherring` ×6 brings layer 2 to 336 bytes (42 × 8, the length of the layer-4 message). The layer-5 comment brings 9,205 bytes to 73,808 / 8 = 9,226, which is why it stops at 17 characters.
+- **The layer-5 GIF is ordinary encoder output.** netpbm's `ppmtogif` reproduces its LZW data byte for byte, and GraphicsMagick reproduces the whole file apart from two header details. Bit planes, palette steps, least-significant-bit statistics and enhanced views show nothing.
+- **Noise:** the noise rate depends strongly on the byte value (about 0.5% for 0x8c, about 49% for 0x80). Given the value, it is independent of position, digit, style, parity and the layer-5 bit. No mechanism or message found.
+- **Separators:** they average 32 but skew low (31: 28%, 32: 49%, 33: 20%, 34: 3.5%). Bit streams from separators, noise, style, parity, digit count and their XORs, at every offset and bit order, contain no file headers or English text.
 - **Sibling hidden pages** (`cyborg.txt`, `me.txt`, `why.txt`) are unrelated.
 
 ## Open questions
 
-- **Layer 6?** Every layer so far hid an instruction for the next. The cover may too. Bit planes and palette usage show nothing obvious yet. The comment is cut off at 17 characters.
+- **Layer 6?** Every layer so far hid an instruction for the next. Nothing found in the layer-5 file, its pixels, or the page's leftover channels (see above).
 - **Why Order of the Phoenix?** It is book 5, and this is layer 5. That may be a coincidence.
 - **The January 2012 date** was the weekend of the MIT Mystery Hunt and right before the SOPA blackout. No connection has been found.
 - A web search found no earlier published decode.

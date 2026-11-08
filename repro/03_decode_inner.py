@@ -52,7 +52,7 @@ def options(tok):
 
 base = [sum(VAL[k] for _, k, _ in t if k != "?") for t in tokens]
 assert len(base) == 336, len(base)
-base[44] = 100  # unreadable burst inside the 6th "redherring": must be 'd'
+assert bytes(base[22:82]) == b"redherring" * 6
 assert bytes(base[:6]) == b"GIF89a"
 assert base[93] == 2 and base[94] == 239 and base[-1] == 0x3B
 

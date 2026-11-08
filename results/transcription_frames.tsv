@@ -132,7 +132,7 @@ frame	content	color
 130	ק	B
 131	א	B
 132	blank	
-133	unreadable	R
+133	ק	R
 134	blank	
 135	ק	B
 136	ד	B
@@ -287,33 +287,33 @@ frame	content	color
 285	ק	B
 286	ל	B
 287	ב	B
-288	static	
+288	blank	
 289	ק	B
 290	מ	B
 291	ג	B
-292	static	
+292	blank	
 293	ק	R
 294	ס	R
 295	ט	R
-296	static	
+296	blank	
 297	ר	R
 298	ג	R
-299	static	
+299	blank	
 300	ר	B
 301	ל	B
 302	ז	B
-303	static	
+303	blank	
 304	י	B
 305	ה	B
-306	static	
+306	blank	
 307	ק	B
 308	ס	B
 309	ג	B
-310	static	
+310	blank	
 311	ק	R
 312	נ	R
 313	ו	R
-314	static	
+314	blank	
 315	ק	B
 316	פ	B
 317	blank	
@@ -324,17 +324,17 @@ frame	content	color
 322	ק	R
 323	ל	R
 324	ט	R
-325	static	
+325	blank	
 326	ק	R
 327	ע	R
 328	ט	R
-329	static	
+329	blank	
 330	ר	R
 331	כ	R
 332	ב	R
-333	static	
+333	blank	
 334	ס	B
-335	static	
+335	blank	
 336	ל	B
 337	ו	B
 338	blank	
@@ -350,8 +350,8 @@ frame	content	color
 348	blank	
 349	ק	R
 350	ס	R
-351	unreadable	R
-352	static	
+351	ח	R
+352	blank	
 353	ק	R
 354	מ	R
 355	ה	R
@@ -359,7 +359,7 @@ frame	content	color
 357	ק	R
 358	כ	R
 359	ח	R
-360	static	
+360	blank	
 361	כ	B
 362	ה	B
 363	blank	
@@ -579,7 +579,7 @@ frame	content	color
 577	blank	
 578	ר	R
 579	ל	R
-580	static	
+580	blank	
 581	ר	R
 582	מ	R
 583	ד	R
@@ -644,12 +644,12 @@ frame	content	color
 642	ה	R
 643	blank	
 644	ק	R
-645	unreadable	R
-646	static	
+645	א	R
+646	blank	
 647	ק	R
 648	ע	R
 649	ט	R
-650	static	
+650	blank	
 651	ק	R
 652	ס	R
 653	ו	R
@@ -668,34 +668,34 @@ frame	content	color
 666	ר	B
 667	ל	B
 668	א	B
-669	static	
+669	blank	
 670	ר	B
 671	י	B
 672	ב	B
-673	static	
+673	blank	
 674	ר	R
 675	כ	R
 676	ח	R
-677	static	
+677	blank	
 678	ר	B
 679	מ	B
 680	א	B
-681	static	
+681	blank	
 682	ק	R
 683	צ	R
 684	ז	R
-685	static	
+685	blank	
 686	פ	B
 687	ו	B
-688	static	
+688	blank	
 689	ר	R
 690	י	R
 691	ד	R
-692	static	
+692	blank	
 693	ק	B
 694	ל	B
 695	ו	B
-696	static	
+696	blank	
 697	ק	R
 698	פ	R
 699	א	R
@@ -728,393 +728,393 @@ frame	content	color
 726	ק	B
 727	ל	B
 728	ה	B
-729	static	
+729	blank	
 730	ר	R
 731	מ	R
 732	ט	R
-733	static	
+733	blank	
 734	נ	R
 735	ד	R
-736	static	
+736	blank	
 737	ק	B
 738	י	B
 739	ח	B
-740	static	
+740	blank	
 741	נ	R
 742	ז	R
-743	static	
+743	blank	
 744	ר	B
 745	א	B
-746	static	
+746	blank	
 747	ר	R
 748	מ	R
 749	ט	R
-750	static	
+750	blank	
 751	ח	B
-752	static	
+752	blank	
 753	ס	R
 754	ח	R
-755	static	
+755	blank	
 756	ג	B
-757	static	
+757	blank	
 758	ק	B
 759	ל	B
 760	ה	B
-761	static	
+761	blank	
 762	ק	R
 763	ל	R
 764	ב	R
-765	static	
+765	blank	
 766	ר	B
 767	ל	B
 768	ד	B
-769	static	
+769	blank	
 770	ר	R
 771	י	R
 772	ד	R
-773	static	
+773	blank	
 774	נ	R
 775	ד	R
-776	static	
+776	blank	
 777	ר	R
 778	מ	R
 779	ח	R
-780	static	
+780	blank	
 781	י	R
-782	static	
+782	blank	
 783	כ	B
 784	ז	B
-785	static	
+785	blank	
 786	מ	B
 787	ג	B
-788	static	
+788	blank	
 789	נ	R
 790	ט	R
-791	static	
+791	blank	
 792	ע	R
 793	ה	R
-794	static	
+794	blank	
 795	צ	B
 796	א	B
-797	static	
+797	blank	
 798	ר	R
 799	נ	R
 800	א	R
-801	static	
+801	blank	
 802	ק	B
 803	צ	B
 804	ב	B
-805	static	
+805	blank	
 806	ק	R
 807	א	R
-808	static	
+808	blank	
 809	ע	B
 810	ה	B
-811	static	
+811	blank	
 812	ק	B
 813	כ	B
 814	ט	B
-815	static	
+815	blank	
 816	ק	R
 817	נ	R
 818	ה	R
-819	static	
+819	blank	
 820	ק	R
 821	פ	R
 822	ז	R
-823	static	
+823	blank	
 824	ק	B
 825	צ	B
 826	ד	B
-827	static	
+827	blank	
 828	ר	B
 829	י	B
 830	ט	B
-831	static	
+831	blank	
 832	ק	B
 833	ו	B
-834	static	
+834	blank	
 835	ק	B
 836	נ	B
 837	ג	B
-838	static	
+838	blank	
 839	ק	R
 840	ל	R
 841	א	R
-842	static	
+842	blank	
 843	ק	R
 844	ל	R
 845	ח	R
-846	static	
+846	blank	
 847	ק	B
 848	נ	B
-849	static	
+849	blank	
 850	כ	B
 851	ד	B
-852	static	
+852	blank	
 853	ר	B
 854	א	B
-855	static	
+855	blank	
 856	ס	B
 857	ח	B
-858	static	
+858	blank	
 859	ר	B
 860	ל	B
 861	ו	B
-862	static	
+862	blank	
 863	נ	R
 864	ו	R
-865	static	
+865	blank	
 866	ר	B
 867	כ	B
 868	ח	B
-869	static	
+869	blank	
 870	ק	B
 871	ס	B
 872	ט	B
-873	static	
+873	blank	
 874	צ	B
 875	ב	B
-876	static	
+876	blank	
 877	כ	B
 878	ו	B
-879	static	
+879	blank	
 880	ר	R
 881	ל	R
-882	static	
+882	blank	
 883	ס	R
 884	ד	R
-885	static	
+885	blank	
 886	ק	R
 887	י	R
 888	ז	R
-889	static	
+889	blank	
 890	ר	B
 891	ל	B
 892	ג	B
-893	static	
+893	blank	
 894	פ	R
 895	ז	R
-896	static	
+896	blank	
 897	ר	B
 898	א	B
-899	static	
-900	unreadable	B
+899	blank	
+900	ק	B
 901	מ	B
-902	static	
+902	blank	
 903	ק	B
 904	כ	B
-905	static	
+905	blank	
 906	ק	B
 907	ס	B
 908	ח	B
-909	static	
+909	blank	
 910	ר	R
 911	מ	R
 912	ו	R
-913	static	
+913	blank	
 914	ר	R
 915	מ	R
 916	ו	R
-917	static	
+917	blank	
 918	י	B
 919	ב	B
-920	static	
+920	blank	
 921	כ	R
 922	ו	R
-923	static	
+923	blank	
 924	ק	B
 925	פ	B
 926	ט	B
-927	static	
+927	blank	
 928	מ	B
 929	ד	B
-930	static	
+930	blank	
 931	ס	R
 932	א	R
-933	static	
+933	blank	
 934	ר	R
 935	ל	R
 936	ד	R
-937	static	
+937	blank	
 938	ק	R
 939	ל	R
-940	static	
+940	blank	
 941	ק	R
 942	צ	R
 943	ב	R
-944	static	
+944	blank	
 945	ק	B
 946	פ	B
 947	ה	B
-948	static	
+948	blank	
 949	ר	R
 950	נ	R
 951	א	R
-952	static	
+952	blank	
 953	כ	B
 954	ט	B
-955	static	
+955	blank	
 956	ק	B
 957	ס	B
 958	ו	B
-959	static	
+959	blank	
 960	ר	B
 961	נ	B
-962	static	
+962	blank	
 963	ק	B
 964	נ	B
 965	ג	B
-966	static	
+966	blank	
 967	ק	B
 968	ל	B
 969	ח	B
-970	static	
+970	blank	
 971	ק	R
 972	פ	R
 973	ט	R
-974	static	
+974	blank	
 975	צ	R
-976	static	
+976	blank	
 977	ק	B
 978	נ	B
 979	ז	B
-980	static	
+980	blank	
 981	ר	B
 982	ל	B
 983	ז	B
-984	static	
+984	blank	
 985	ק	R
 986	פ	R
 987	ז	R
-988	static	
+988	blank	
 989	ר	B
 990	ו	B
-991	static	
+991	blank	
 992	ר	B
 993	כ	B
 994	ב	B
-995	static	
+995	blank	
 996	ר	R
 997	ל	R
 998	ח	R
-999	static	
+999	blank	
 1000	ר	R
 1001	נ	R
 1002	ד	R
-1003	static	
+1003	blank	
 1004	י	B
 1005	ד	B
-1006	static	
+1006	blank	
 1007	ל	R
 1008	א	R
-1009	static	
+1009	blank	
 1010	מ	B
 1011	ז	B
-1012	static	
+1012	blank	
 1013	צ	B
 1014	ה	B
-1015	static	
+1015	blank	
 1016	מ	R
 1017	ג	R
-1018	static	
+1018	blank	
 1019	ק	R
 1020	נ	R
 1021	ו	R
-1022	static	
+1022	blank	
 1023	ר	R
 1024	נ	R
-1025	static	
+1025	blank	
 1026	כ	B
 1027	ט	B
-1028	static	
+1028	blank	
 1029	ר	R
 1030	נ	R
 1031	ד	R
-1032	static	
+1032	blank	
 1033	נ	R
 1034	ח	R
-1035	static	
+1035	blank	
 1036	ק	B
 1037	ט	B
-1038	static	
+1038	blank	
 1039	ק	R
 1040	פ	R
 1041	ו	R
-1042	static	
+1042	blank	
 1043	ק	B
 1044	ע	B
 1045	ד	B
-1046	static	
+1046	blank	
 1047	ק	R
 1048	נ	R
 1049	ט	R
-1050	static	
+1050	blank	
 1051	ק	B
 1052	ס	B
 1053	ו	B
-1054	static	
+1054	blank	
 1055	ק	B
 1056	ד	B
-1057	static	
+1057	blank	
 1058	ק	B
 1059	ע	B
 1060	א	B
-1061	static	
+1061	blank	
 1062	ק	R
 1063	ע	R
 1064	ה	R
-1065	static	
+1065	blank	
 1066	ק	B
 1067	ל	B
 1068	ט	B
-1069	static	
+1069	blank	
 1070	נ	B
 1071	ט	B
-1072	static	
+1072	blank	
 1073	פ	B
 1074	ו	B
-1075	static	
+1075	blank	
 1076	ק	B
 1077	י	B
 1078	ג	B
-1079	static	
+1079	blank	
 1080	ק	R
 1081	ע	R
 1082	ד	R
-1083	static	
+1083	blank	
 1084	ר	R
 1085	נ	R
 1086	ב	R
-1087	static	
+1087	blank	
 1088	ק	B
 1089	נ	B
 1090	ה	B
-1091	static	
+1091	blank	
 1092	ק	B
 1093	ל	B
 1094	ה	B
-1095	static	
+1095	blank	
 1096	מ	R
 1097	ח	R
-1098	static	
+1098	blank	
 1099	ק	B
 1100	ס	B
 1101	א	B
-1102	static	
+1102	blank	
 1103	ק	B
 1104	צ	B
 1105	ד	B
-1106	static	
+1106	blank	
 1107	י	R
 1108	ג	R
-1109	static	
+1109	blank	
 1110	ה	B
-1111	static	
+1111	blank	
 1112	אפס	R
-1113	static	
+1113	blank	
 1114	אפס	R
-1115	static	
+1115	blank	
 1116	נ	R
 1117	ט	R
-1118	static	
+1118	blank	
