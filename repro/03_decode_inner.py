@@ -1,3 +1,11 @@
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "numpy",
+#     "pillow",
+# ]
+# ///
+
 # usage: 03_decode_inner.py <workdir>
 # Turns letter bursts into bytes (gematria), repairs the inner GIF's LZW data
 # with a minimal-change search, and writes inner.gif + transcription_bytes.txt.

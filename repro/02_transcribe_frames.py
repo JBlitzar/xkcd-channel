@@ -1,3 +1,11 @@
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "numpy",
+#     "scipy",
+# ]
+# ///
+
 # usage: 02_transcribe_frames.py <workdir>
 # Reads frames.npy, classifies every frame, writes seq.json, tokens.json,
 # alts.json and transcription_frames.tsv.

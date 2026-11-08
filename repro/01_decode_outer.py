@@ -1,3 +1,10 @@
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "numpy",
+#     "pillow",
+# ]
+# ///
 from pathlib import Path
 from collections import Counter
 import io, sys, json
